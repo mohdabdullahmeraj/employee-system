@@ -3,10 +3,12 @@ import employeeData from '../data'
 import EmployeeRow from './EmployeeRow';
 import Header from './Header';
 import Pagination from './Pagination';
+import EmployeeFormModal from './EmployeeFormModal';
 
 const EmployeeTable = () => {
     const [employee, setEmployee] = useState(employeeData)
     const [selectedEmployees, setSelectedEmployees] = useState([])
+    const [showModal, setShowModal] = useState(false)
 
     const handleCheckboxChange = (id) => {
         if(selectedEmployees.includes(id)){
@@ -26,16 +28,35 @@ const EmployeeTable = () => {
     }
 
     const handleDelete = () => {
-        const updateList = employee.filter(emp => !selectedEmployees.includes(emp.id))
-        setEmployee(updateList)
-        setSelectedEmployees([])
+        const confirmDelete = window.confirm("Do you want to delete the record")
+        if(confirmDelete){
 
+            const updateList = employee.filter(emp => !selectedEmployees.includes(emp.id))
+            setEmployee(updateList)
+            setSelectedEmployees([])
+        }
+
+    }
+
+    const handleConfirmAdd = (newEmployee) => {
+        const id = Math.max(...employee.map(emp => emp.id)) + 1
+        const updated = [...employee, { ...newEmployee, id}]
+        setEmployee(updated) 
+        setShowModal(false)
+    }
+
+    const handleCancelAdd = () => {
+        setShowModal(false)
     }
 
     return (
     
     <div className='container'>
-        <Header disabledDelete={selectedEmployees.length === 0} onDelete={() => handleDelete()} />
+        <Header 
+            disabledDelete={selectedEmployees.length === 0} 
+            onDelete={() => handleDelete()} 
+            onAddEmployee={() => setShowModal(true)}
+        />
         <div className="table-wrapper">
 
             <table>
@@ -63,6 +84,14 @@ const EmployeeTable = () => {
             </table>
         </div>
         <Pagination/>
+
+        {showModal && (
+                <EmployeeFormModal
+                    onConfirm={handleConfirmAdd}
+                    onClose={handleCancelAdd}
+                />
+        )}
+
     </div>
   )
 }
