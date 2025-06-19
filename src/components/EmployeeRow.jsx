@@ -1,6 +1,6 @@
 import React from 'react'
 
-const EmployeeRow = ({employee, isSelected, onCheckboxChange}) => {
+const EmployeeRow = ({employee, isSelected, onCheckboxChange, onDelete}) => {
   return (
     <tr>
         <td><input className='check' type="checkbox" checked={isSelected} onChange={onCheckboxChange} /></td>
@@ -10,7 +10,7 @@ const EmployeeRow = ({employee, isSelected, onCheckboxChange}) => {
         <td>{employee.phone}</td>
         <td className='actions'>
             <button>✏️</button>
-            <button>🗑️</button>
+            <button onClick={onDelete}>🗑️</button>
         </td>
     </tr>
   )

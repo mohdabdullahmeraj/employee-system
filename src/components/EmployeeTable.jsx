@@ -49,6 +49,14 @@ const EmployeeTable = () => {
         setShowModal(false)
     }
 
+    const handleDeleteOne = (id) => {
+        const confirmDelete = window.confirm("Do you want to delete the record")
+        if(confirmDelete){
+
+            setEmployee(employee.filter(emp => emp.id !== id))
+        }
+    }
+
     return (
     
     <div className='container'>
@@ -78,6 +86,7 @@ const EmployeeTable = () => {
                             employee={emp}
                             isSelected = {selectedEmployees.includes(emp.id)} 
                             onCheckboxChange = {() => handleCheckboxChange(emp.id)}
+                            onDelete={() => handleDeleteOne(emp.id)}
                             />
                         ))}
                     </tbody>
