@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const EmployeeFormModal = ({onClose, onConfirm}) => {
+const EmployeeFormModal = ({onClose, onConfirm, editingEmployee}) => {
 
     const [formData, setFormData] = useState({
         name: '',
@@ -8,6 +8,12 @@ const EmployeeFormModal = ({onClose, onConfirm}) => {
         address: '',
         phone: ''  
     })
+
+    useEffect(() => {
+        if(editingEmployee){
+            setFormData(editingEmployee)
+        }
+    }, [editingEmployee])
 
     const handleChange = (e) => {
         const {name, value} = e.target
@@ -17,6 +23,8 @@ const EmployeeFormModal = ({onClose, onConfirm}) => {
             [name]: value
         })
     }
+
+
 
     return (
         <div className="modal-overlay">

@@ -9,6 +9,7 @@ const EmployeeTable = () => {
     const [employee, setEmployee] = useState(employeeData)
     const [selectedEmployees, setSelectedEmployees] = useState([])
     const [showModal, setShowModal] = useState(false)
+    const [editingEmployee, setEditingEmployee] = useState(null)
 
     const handleCheckboxChange = (id) => {
         if(selectedEmployees.includes(id)){
@@ -38,15 +39,25 @@ const EmployeeTable = () => {
 
     }
 
-    const handleConfirmAdd = (newEmployee) => {
-        const id = Math.max(...employee.map(emp => emp.id)) + 1
-        const updated = [...employee, { ...newEmployee, id}]
-        setEmployee(updated) 
+    const handleConfirmAdd = (formData) => {
+        if(editingEmployee){
+            const updated = employee.map(emp => emp.id === editingEmployee.id ? {...formData, id: editingEmployee.id}: emp)
+            setEmployee(updated)
+            setEditingEmployee(null)
+
+        }else{
+            const id = Math.max(...employee.map(emp => emp.id)) + 1
+            const updated = [...employee, { ...formData, id}]
+            setEmployee(updated) 
+            setShowModal(false)
+        }
+
         setShowModal(false)
     }
 
     const handleCancelAdd = () => {
         setShowModal(false)
+        setEditingEmployee(null)
     }
 
     const handleDeleteOne = (id) => {
@@ -55,6 +66,11 @@ const EmployeeTable = () => {
 
             setEmployee(employee.filter(emp => emp.id !== id))
         }
+    }
+
+    const handleEditEmployee = (id) => {
+        setEditingEmployee(employee.find(emp => emp.id === id))
+        setShowModal(true)
     }
 
     return (
@@ -87,6 +103,7 @@ const EmployeeTable = () => {
                             isSelected = {selectedEmployees.includes(emp.id)} 
                             onCheckboxChange = {() => handleCheckboxChange(emp.id)}
                             onDelete={() => handleDeleteOne(emp.id)}
+                            onEdit={() => handleEditEmployee(emp.id)}
                             />
                         ))}
                     </tbody>
@@ -98,6 +115,7 @@ const EmployeeTable = () => {
                 <EmployeeFormModal
                     onConfirm={handleConfirmAdd}
                     onClose={handleCancelAdd}
+                    editingEmployee={editingEmployee}
                 />
         )}
 
