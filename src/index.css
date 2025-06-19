@@ -36,6 +36,13 @@ body {
   display: flex;
   gap: 10px;
 }
+
+button:disabled {
+  background-color: #aaa !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .action-bar button {
   padding: 10px 15px;
   margin-right: 10px;
@@ -43,6 +50,11 @@ body {
   color: white;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.delete-btn:disabled {
+  background-color: #aaa ;
+  cursor: not-allowed ;
 }
 
 .action-bar button:active{
@@ -60,8 +72,12 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
+}
+
+table-wrapper{
   overflow-x: auto;
-  display: block;
+  display: flex;
+  justify-content: center;    
 }
 
 thead {
@@ -72,6 +88,11 @@ thead {
 th, td {
   padding: 12px;
   border-bottom: 1px solid #ddd;
+}
+
+.check{
+  cursor: pointer;
+
 }
 
 .actions button {
