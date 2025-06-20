@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import employeeData from '../data'
 import EmployeeRow from './EmployeeRow';
 import Header from './Header';
@@ -6,10 +6,26 @@ import Pagination from './Pagination';
 import EmployeeFormModal from './EmployeeFormModal';
 
 const EmployeeTable = () => {
-    const [employee, setEmployee] = useState(employeeData)
+    const [employee, setEmployee] = useState(() => {
+        const stored = localStorage.getItem('employees')
+        let initial = stored? JSON.parse(stored) : employeeData
+
+        initial = initial.map((emp, idx) => ({
+            ...emp, 
+            id: emp.id ?? idx+1
+        }))
+
+        return initial
+    })
     const [selectedEmployees, setSelectedEmployees] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [editingEmployee, setEditingEmployee] = useState(null)
+
+    useEffect(() => {
+      localStorage.setItem('employees', JSON.stringify(employee))
+
+    }, [employee])
+    
 
     const handleCheckboxChange = (id) => {
         if(selectedEmployees.includes(id)){
