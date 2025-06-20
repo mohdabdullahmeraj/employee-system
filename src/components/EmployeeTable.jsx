@@ -4,6 +4,7 @@ import EmployeeRow from './EmployeeRow';
 import Header from './Header';
 import Pagination from './Pagination';
 import EmployeeFormModal from './EmployeeFormModal';
+import ConfirmModal from './ConfirmModal';
 
 const EmployeeTable = () => {
     const [employee, setEmployee] = useState(() => {
@@ -20,6 +21,10 @@ const EmployeeTable = () => {
     const [selectedEmployees, setSelectedEmployees] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [editingEmployee, setEditingEmployee] = useState(null)
+    const [showConfirmModal, setShowConfirmModal] = useState(false)
+    const [modalMessage, setModalMessage] = useState("Are you sure?")
+    const [modalMode, setModalMode] = useState("confirm")
+    const [onModalConfirm, setOnModalConfirm] = useState(null)
 
     useEffect(() => {
       localStorage.setItem('employees', JSON.stringify(employee))
@@ -45,13 +50,23 @@ const EmployeeTable = () => {
     }
 
     const handleDelete = () => {
-        const confirmDelete = window.confirm("Do you want to delete the record")
-        if(confirmDelete){
-
+        if(selectedEmployees.length === 1){
+            const emp = employee.find(emp => emp.id === selectedEmployees[0])
+            setModalMessage(`Do you want to delete the record, ${emp.name}`)
+        }else{
+            setModalMessage("Do you want to delete the records")
+        }
+        
+        setModalMode("confirm")
+        setOnModalConfirm(() => () => {
             const updateList = employee.filter(emp => !selectedEmployees.includes(emp.id))
             setEmployee(updateList)
             setSelectedEmployees([])
-        }
+            setShowConfirmModal(false)
+        })
+        
+
+        setShowConfirmModal(true)
 
     }
 
@@ -77,11 +92,15 @@ const EmployeeTable = () => {
     }
 
     const handleDeleteOne = (id) => {
-        const confirmDelete = window.confirm("Do you want to delete the record")
-        if(confirmDelete){
-
+        const emp = employee.find(emp => emp.id === id)
+        setModalMessage(`Do you want to delete the record, ${emp.name}`)
+        setModalMode("confirm")
+        setOnModalConfirm(() => () => {
             setEmployee(employee.filter(emp => emp.id !== id))
-        }
+            setShowConfirmModal(false)
+        })
+
+        setShowConfirmModal(true)
     }
 
     const handleEditEmployee = (id) => {
@@ -132,6 +151,16 @@ const EmployeeTable = () => {
                     onConfirm={handleConfirmAdd}
                     onClose={handleCancelAdd}
                     editingEmployee={editingEmployee}
+                />
+        )}
+
+        {showConfirmModal && (
+                <ConfirmModal 
+                    message={modalMessage}
+                    onConfirm={onModalConfirm}
+                    onCancel={() => setShowConfirmModal(false)}
+                    mode={modalMode}
+
                 />
         )}
 

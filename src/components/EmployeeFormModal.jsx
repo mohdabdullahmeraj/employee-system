@@ -41,7 +41,7 @@ const EmployeeFormModal = ({onClose, onConfirm, editingEmployee}) => {
                     <button onClick={onClose}>Cancel</button>
                     <button onClick={() => {
                         if(!formData.name || !formData.email || !formData.address || !formData.phone){
-                            alert("Please fill in alll fields")
+                            alert("Please fill in all fields")
                             return
                         }
 
