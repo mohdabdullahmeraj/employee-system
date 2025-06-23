@@ -7,6 +7,7 @@ import EmployeeFormModal from './EmployeeFormModal';
 import ConfirmModal from './ConfirmModal';
 
 const EmployeeTable = () => {
+    
     const [employee, setEmployee] = useState(() => {
         const stored = localStorage.getItem('employees')
         let initial = stored? JSON.parse(stored) : employeeData
@@ -25,6 +26,13 @@ const EmployeeTable = () => {
     const [modalMessage, setModalMessage] = useState("Are you sure?")
     const [modalMode, setModalMode] = useState("confirm")
     const [onModalConfirm, setOnModalConfirm] = useState(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const recordsPerPage = 5
+    const startIndex = (currentPage - 1) * recordsPerPage
+    const endIndex = startIndex + recordsPerPage
+    const currentEmployees = employee.slice(startIndex, endIndex)
+    const totalPages = Math.ceil(employee.length / recordsPerPage)
+    const pages = Array.from({length: totalPages}, (_, i) => i+1)
 
     useEffect(() => {
       localStorage.setItem('employees', JSON.stringify(employee))
@@ -138,7 +146,7 @@ const EmployeeTable = () => {
                     </tr>
                     </thead>
                     <tbody>
-                        {employee.map(emp =>(
+                        {currentEmployees.map(emp =>(
                             <EmployeeRow 
                             key={emp.id} 
                             employee={emp}
@@ -151,7 +159,13 @@ const EmployeeTable = () => {
                     </tbody>
             </table>
         </div>
-        <Pagination/>
+        <Pagination
+            totalPages = {totalPages}
+            currentPage = {currentPage}
+            setCurrentPage = {setCurrentPage} 
+            totalL ={employee.length}
+            currentL ={currentEmployees.length}   
+        />
 
         {showModal && (
                 <EmployeeFormModal

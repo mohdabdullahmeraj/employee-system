@@ -1,17 +1,45 @@
 import React from 'react'
 
-const Pagination = () => {
+const Pagination = ({totalPages, currentPage, setCurrentPage, totalL, currentL}) => {
+  
+  const pages = Array.from({length: totalPages}, (_, i) => i+1)
+
   return (
     <div className='pagination'>
-        <div>Showing <strong>5</strong> out of <strong>25</strong> entires</div>
+        <div>Showing <strong>{currentL}</strong> out of <strong>{totalL}</strong> entires</div>
         <div>
-            <button>Previous</button>
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>4</button>
-            <button>5</button>
-            <button>Next</button>
+            <button 
+              onClick={() => {
+                if (currentPage !== 1){
+                  setCurrentPage(currentPage-1)
+                }
+              }}
+              disabled={currentPage === 1}
+
+            >
+              Previous
+            </button>
+            {pages.map(pageNumber => (
+              <button 
+                key={pageNumber}
+                onClick={() => setCurrentPage(pageNumber)}
+                className={currentPage === pageNumber ? 'active':''}
+              >
+                {pageNumber}
+              </button>
+            ))
+
+            }
+            <button
+              onClick={() => {
+                if(currentPage !== totalPages){
+                  setCurrentPage(currentPage+1)
+                }
+              }}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
         </div>
     </div>
   )
