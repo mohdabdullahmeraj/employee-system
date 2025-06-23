@@ -4,6 +4,8 @@ const ConfirmModal = ({ message, onCancel, onConfirm, mode }) => {
   
 
   return (
+    <div className="confirm-modal">
+      
     <div className="modal-overlay">
       <div className={`modal-content ${mode === "alert" ? 'modal-alert' : 'modal-confirm'}`}>
         <div className="msg">{message}</div>
@@ -13,9 +15,9 @@ const ConfirmModal = ({ message, onCancel, onConfirm, mode }) => {
             <>
             <button onClick={onCancel}>Cancel</button>
             <button onClick={() => {
-                if (typeof onConfirm === "function") {
-                    onConfirm()
-                }}}>
+              if (typeof onConfirm === "function") {
+                onConfirm()
+              }}}>
             
             Confirm</button>
             
@@ -25,6 +27,7 @@ const ConfirmModal = ({ message, onCancel, onConfirm, mode }) => {
           {mode === "alert" && <button onClick={onCancel}>Okay</button>}
         </div>
       </div>
+    </div>
     </div>
   );
 };

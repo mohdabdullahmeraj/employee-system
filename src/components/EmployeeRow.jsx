@@ -1,6 +1,6 @@
 import React from 'react'
 
-const EmployeeRow = ({employee, isSelected, onCheckboxChange, onDelete, onEdit}) => {
+const EmployeeRow = ({employee, isSelected, onCheckboxChange, onDelete, onEdit, onMail}) => {
   return (
     <tr>
         <td><input className='check' type="checkbox" checked={isSelected} onChange={onCheckboxChange} /></td>
@@ -11,6 +11,7 @@ const EmployeeRow = ({employee, isSelected, onCheckboxChange, onDelete, onEdit})
         <td className='actions'>
             <button onClick={onEdit}>✏️</button>
             <button onClick={onDelete}>🗑️</button>
+            <button onClick={onMail}>📧</button>
         </td>
     </tr>
   )

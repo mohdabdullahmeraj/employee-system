@@ -5,6 +5,7 @@ import Header from './Header';
 import Pagination from './Pagination';
 import EmployeeFormModal from './EmployeeFormModal';
 import ConfirmModal from './ConfirmModal';
+import EmailModal from './EmailModal';
 
 const EmployeeTable = () => {
     
@@ -33,6 +34,8 @@ const EmployeeTable = () => {
     const currentEmployees = employee.slice(startIndex, endIndex)
     const totalPages = Math.ceil(employee.length / recordsPerPage)
     const pages = Array.from({length: totalPages}, (_, i) => i+1)
+    const [showMailModal, setShowMailModal] = useState(false)
+    const [emailRecipients, setEmailRecipients] = useState([])
 
     useEffect(() => {
       localStorage.setItem('employees', JSON.stringify(employee))
@@ -116,20 +119,44 @@ const EmployeeTable = () => {
         setShowModal(true)
     }
 
+    const handleMailEmployee = (id) => {
+        const emp = employee.find(emp => emp.id === id)
+        if(emp){
+            setEmailRecipients([emp.email])
+            setShowMailModal(true)
+        }
+    }
+
+    const handleBulkMail = () => {
+        const selectedEmails = employee.filter(emp => selectedEmployees.includes(emp.id)).map(emp => emp.email)
+        setEmailRecipients(selectedEmails)
+        setShowMailModal(true)
+    }
+
+    const handleMailSend = ({recipients, subject, body}) => {
+        console.log("Sending email to:", recipients)
+        console.log("Subject:", subject)
+        console.log("Body:", body)
+
+        setShowMailModal(false)
+    }
+
     const showAlert = (message) => {
         setModalMessage(message)
         setModalMode("alert")
         setOnModalConfirm(null)
         setShowConfirmModal(true)
     } 
-
     return (
     
     <div className='container'>
+        
         <Header 
             disabledDelete={selectedEmployees.length === 0} 
             onDelete={() => handleDelete()} 
             onAddEmployee={() => setShowModal(true)}
+            openMailModal={() => handleBulkMail()}
+            disabledMail={selectedEmployees.length === 0}
         />
         <div className="table-wrapper">
 
@@ -154,6 +181,7 @@ const EmployeeTable = () => {
                             onCheckboxChange = {() => handleCheckboxChange(emp.id)}
                             onDelete={() => handleDeleteOne(emp.id)}
                             onEdit={() => handleEditEmployee(emp.id)}
+                            onMail={() => handleMailEmployee(emp.id)}
                             />
                         ))}
                     </tbody>
@@ -184,6 +212,15 @@ const EmployeeTable = () => {
                     mode={modalMode}
 
                 />
+        )}
+
+        {showMailModal && (
+            <EmailModal 
+                recipients={emailRecipients}
+                onSend = {handleMailSend}
+                onClose = {() => setShowMailModal(false)}
+                showAlert={showAlert}
+            />
         )}
 
     </div>
