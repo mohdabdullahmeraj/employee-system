@@ -9,6 +9,9 @@ const EmployeeFormModal = ({onClose, onConfirm, editingEmployee, showAlert}) => 
         phone: ''  
     })
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+
     useEffect(() => {
         if(editingEmployee){
             setFormData(editingEmployee)
@@ -40,21 +43,26 @@ const EmployeeFormModal = ({onClose, onConfirm, editingEmployee, showAlert}) => 
                 <div className='modal-btn'>
                     <button onClick={onClose}>Cancel</button>
                     <button onClick={() => {
+                        setIsSubmitting(true);
+
                         if(!formData.name || !formData.email || !formData.address || !formData.phone){
                             // alert("Please fill in all fields")
                             showAlert("Please fill in all fields")
+                            setIsSubmitting(false);
                             return
                         }
 
                         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
                         if(!emailPattern.test(formData.email)){
                             showAlert("Please enter a valid email address")
+                            setIsSubmitting(false);
                             return
                         }
 
                         const phonePattern = /^[0-9]{10}$/
                         if(!phonePattern.test(formData.phone)){
                             showAlert("Please enter a valid phone number")
+                            setIsSubmitting(false);
                             return
                         }
 
@@ -62,7 +70,7 @@ const EmployeeFormModal = ({onClose, onConfirm, editingEmployee, showAlert}) => 
                         onConfirm(formData)
 
 
-                    }}>Confirm</button>
+                    }}>{isSubmitting ? "Saving..." : "Confirm"}</button>
                 </div>
             </div>
         </div>

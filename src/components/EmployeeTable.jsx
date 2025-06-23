@@ -146,7 +146,7 @@ const EmployeeTable = () => {
                     </tr>
                     </thead>
                     <tbody>
-                        {currentEmployees.map(emp =>(
+                        {currentEmployees.map((emp) =>(
                             <EmployeeRow 
                             key={emp.id} 
                             employee={emp}

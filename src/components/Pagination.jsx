@@ -17,7 +17,7 @@ const Pagination = ({totalPages, currentPage, setCurrentPage, totalL, currentL})
               disabled={currentPage === 1}
 
             >
-              Previous
+              Previous 
             </button>
             {pages.map(pageNumber => (
               <button 
