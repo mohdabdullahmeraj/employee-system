@@ -49,11 +49,11 @@ const EmployeeTable = () => {
     }
 
     const handleSelectAll = () => {
-        if(selectedEmployees.length === employee.length){
-            setSelectedEmployees([])
+        if(currentEmployees.every(emp => selectedEmployees.includes(emp.id))){
+            setSelectedEmployees(prev => prev.filter(id => !currentEmployees.some(emp => emp.id === id)))
         }
         else{
-            setSelectedEmployees(employee.map(emp => emp.id))
+            setSelectedEmployees(prev => [...new Set([...prev, ...currentEmployees.map(emp => emp.id)])])
         }
     }
 
@@ -137,7 +137,7 @@ const EmployeeTable = () => {
                 <thead>
                     <tr>
 
-                        <th><input type="checkbox" checked={selectedEmployees.length === employee.length} onChange={handleSelectAll} /></th>
+                        <th><input type="checkbox" checked={currentEmployees.every(emp => selectedEmployees.includes(emp.id))} onChange={handleSelectAll} /></th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Address</th>
