@@ -1,11 +1,11 @@
 import React from "react";
 
 const ConfirmModal = ({ message, onCancel, onConfirm, mode }) => {
-  console.log(message);
+  
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className={`modal-content ${mode === "alert" ? 'modal-alert' : 'modal-confirm'}`}>
         <div className="msg">{message}</div>
 
         <div className="modal-btn">

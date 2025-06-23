@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const EmployeeFormModal = ({onClose, onConfirm, editingEmployee}) => {
+const EmployeeFormModal = ({onClose, onConfirm, editingEmployee, showAlert}) => {
 
     const [formData, setFormData] = useState({
         name: '',
@@ -41,19 +41,20 @@ const EmployeeFormModal = ({onClose, onConfirm, editingEmployee}) => {
                     <button onClick={onClose}>Cancel</button>
                     <button onClick={() => {
                         if(!formData.name || !formData.email || !formData.address || !formData.phone){
-                            alert("Please fill in all fields")
+                            // alert("Please fill in all fields")
+                            showAlert("Please fill in all fields")
                             return
                         }
 
                         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
                         if(!emailPattern.test(formData.email)){
-                            alert("Please enter a valid email address")
+                            showAlert("Please enter a valid email address")
                             return
                         }
 
                         const phonePattern = /^[0-9]{10}$/
                         if(!phonePattern.test(formData.phone)){
-                            alert("Please enter a valid phone number")
+                            showAlert("Please enter a valid phone number")
                             return
                         }
 

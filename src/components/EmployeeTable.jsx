@@ -108,6 +108,13 @@ const EmployeeTable = () => {
         setShowModal(true)
     }
 
+    const showAlert = (message) => {
+        setModalMessage(message)
+        setModalMode("alert")
+        setOnModalConfirm(null)
+        setShowConfirmModal(true)
+    } 
+
     return (
     
     <div className='container'>
@@ -151,6 +158,7 @@ const EmployeeTable = () => {
                     onConfirm={handleConfirmAdd}
                     onClose={handleCancelAdd}
                     editingEmployee={editingEmployee}
+                    showAlert={showAlert}
                 />
         )}
 

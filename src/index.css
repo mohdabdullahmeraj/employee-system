@@ -172,6 +172,23 @@ th, td {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
+.modal-confirm{
+  width: 90%
+}
+
+.modal-alert{
+  width: 70% !important;
+  max-width: 300px;
+
+}
+
+.modal-fields{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .modal-fields input {
   display: block;
   width: 100%;
