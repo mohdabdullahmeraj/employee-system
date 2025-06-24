@@ -7,6 +7,7 @@ import EmployeeFormModal from './EmployeeFormModal';
 import ConfirmModal from './ConfirmModal';
 import EmailModal from './EmailModal';
 import emailjs from '@emailjs/browser'
+import SearchBar from './SearchBar';
 
 const EmployeeTable = () => {
     
@@ -29,12 +30,23 @@ const EmployeeTable = () => {
     const [modalMessage, setModalMessage] = useState("Are you sure?")
     const [modalMode, setModalMode] = useState("confirm")
     const [onModalConfirm, setOnModalConfirm] = useState(null)
+    const [searchQuery, setSearchQuery] = useState("")
+    
+    const filteredEmployees = employee.filter(emp => {
+        const query = searchQuery.toLowerCase()
+        return (
+            emp.name.toLowerCase().includes(query) ||
+            emp.email.toLowerCase().includes(query) ||
+            emp.phone.toLowerCase().includes(query)
+        )
+    })
+
     const [currentPage, setCurrentPage] = useState(1)
     const recordsPerPage = 5
     const startIndex = (currentPage - 1) * recordsPerPage
     const endIndex = startIndex + recordsPerPage
-    const currentEmployees = employee.slice(startIndex, endIndex)
-    const totalPages = Math.ceil(employee.length / recordsPerPage)
+    const currentEmployees = filteredEmployees.slice(startIndex, endIndex)
+    const totalPages = Math.ceil(filteredEmployees.length / recordsPerPage)
     const pages = Array.from({length: totalPages}, (_, i) => i+1)
     const [showMailModal, setShowMailModal] = useState(false)
     const [emailRecipients, setEmailRecipients] = useState([])
@@ -45,6 +57,10 @@ const EmployeeTable = () => {
       localStorage.setItem('employees', JSON.stringify(employee))
 
     }, [employee])
+    
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchQuery])
     
 
     const handleCheckboxChange = (id) => {
@@ -185,6 +201,11 @@ const EmployeeTable = () => {
         setOnModalConfirm(null)
         setShowConfirmModal(true)
     } 
+
+    const handleClearSearch = () => {
+        setSearchQuery("");
+    };
+
     return (
     
     <div className='container'>
@@ -196,6 +217,13 @@ const EmployeeTable = () => {
             openMailModal={() => handleBulkMail()}
             disabledMail={selectedEmployees.length === 0}
         />
+
+        <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onClear={() => handleClearSearch()}
+        />
+
         <div className="table-wrapper">
 
             <table>
@@ -212,7 +240,14 @@ const EmployeeTable = () => {
                     </tr>
                     </thead>
                     <tbody>
-                        {currentEmployees.map((emp) =>(
+                        {currentEmployees.length === 0? (
+                            <tr>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
+                                    No matching records found.
+                                </td>
+                            </tr>
+                        ) : (
+                        currentEmployees.map((emp) => (
                             <EmployeeRow 
                             key={emp.id} 
                             employee={emp}
@@ -222,7 +257,8 @@ const EmployeeTable = () => {
                             onEdit={() => handleEditEmployee(emp.id)}
                             onMail={() => handleMailEmployee(emp.id)}
                             />
-                        ))}
+                        )))}
+                        {}
                     </tbody>
             </table>
         </div>
