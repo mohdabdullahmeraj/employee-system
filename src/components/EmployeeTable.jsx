@@ -6,6 +6,7 @@ import Pagination from './Pagination';
 import EmployeeFormModal from './EmployeeFormModal';
 import ConfirmModal from './ConfirmModal';
 import EmailModal from './EmailModal';
+import emailjs from '@emailjs/browser'
 
 const EmployeeTable = () => {
     
@@ -36,6 +37,7 @@ const EmployeeTable = () => {
     const pages = Array.from({length: totalPages}, (_, i) => i+1)
     const [showMailModal, setShowMailModal] = useState(false)
     const [emailRecipients, setEmailRecipients] = useState([])
+    const [isSending, setIsSending] = useState(false)
 
     useEffect(() => {
       localStorage.setItem('employees', JSON.stringify(employee))
@@ -134,11 +136,43 @@ const EmployeeTable = () => {
     }
 
     const handleMailSend = ({recipients, subject, body}) => {
-        console.log("Sending email to:", recipients)
-        console.log("Subject:", subject)
-        console.log("Body:", body)
+        // console.log("Sending email to:", recipients)
+        // console.log("Subject:", subject)
+        // console.log("Body:", body)
 
+        // setShowMailModal(false)
+        if(recipients.length === 0){
+            showAlert("No recipients to send email to.")
+            return 
+        }
         setShowMailModal(false)
+
+        const emailPromises = recipients.map((to_email) => {
+            const templateParameters ={
+                to_email,
+                subject,
+                message: body
+            }
+
+            return emailjs.send(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                templateParameters,
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+            )   
+        })
+
+        Promise.all(emailPromises)
+            .then(() => {
+                showAlert('Email(s) sent successfully!')
+            })
+            .catch((err) => {
+                console.error('EmailJS error: ', err)
+                showAlert("Some emails failed to send.")
+            })
+            .finally(() => {
+                setIsSending(false)
+            })
     }
 
     const showAlert = (message) => {
@@ -220,6 +254,8 @@ const EmployeeTable = () => {
                 onSend = {handleMailSend}
                 onClose = {() => setShowMailModal(false)}
                 showAlert={showAlert}
+                isSending={isSending}
+                setIsSending={setIsSending}
             />
         )}
 

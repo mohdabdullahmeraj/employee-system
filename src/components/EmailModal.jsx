@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 
 
-const EmailModal = ({recipients, onClose, onSend, showAlert }) => {
+const EmailModal = ({recipients, onClose, onSend, showAlert, isSending, setIsSending }) => {
 
     const [subject, setSubject] = useState("")
     const [body, setBody] = useState("")
-    const [isSending, setIsSending] = useState(false)
     
     const handleChange = (e) => {
         const {name, value} = e.target
