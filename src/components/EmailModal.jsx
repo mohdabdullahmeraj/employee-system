@@ -1,13 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 
-const EmailModal = ({recipients, onClose, onSend, showAlert, isSending, setIsSending }) => {
+const EmailModal = ({recipients, onClose, onSend, showAlert, isSending, setIsSending, errorMessage, setErrorMessage }) => {
 
     const [subject, setSubject] = useState("")
     const [body, setBody] = useState("")
+
+    useEffect(() => {
+        setErrorMessage("") 
+    }, [])
     
     const handleChange = (e) => {
         const {name, value} = e.target
+        setErrorMessage("")
 
         if (name === 'subject'){
             setSubject(value)
@@ -23,14 +28,19 @@ const EmailModal = ({recipients, onClose, onSend, showAlert, isSending, setIsSen
             <div className='modal-content'>
                 <div className='modal-fields'>
 
-                    <input type="text" name='to' value={recipients.join(', ')} onChange={handleChange} placeholder='To' readOnly/>
-                    <input type="text" name='subject' value={subject} onChange={handleChange} placeholder='Subject'/>
-                    <textarea name='body' value={body} onChange={handleChange} placeholder='Body'/>
+                    <input type="text" name='to' value={recipients.join(', ')} onChange={handleChange} placeholder='To' disabled={isSending} readOnly/>
+                    <input type="text" name='subject' value={subject} onChange={handleChange} placeholder='Subject' disabled={isSending}/>
+                    <textarea name='body' value={body} onChange={handleChange} placeholder='Body' disabled={isSending}/>
                     
                 
                 </div>
+                {errorMessage && (
+                    <div className='error-text'>
+                        {errorMessage}
+                    </div>
+                )}
                 <div className='modal-btn'>
-                    <button onClick={onClose}>Cancel</button>
+                    <button className='mail-btn-cancel' onClick={onClose} disabled={isSending}>Cancel</button>
                     <button onClick={() => {
                        setIsSending(true)
 
@@ -49,7 +59,7 @@ const EmailModal = ({recipients, onClose, onSend, showAlert, isSending, setIsSen
                        
                        onSend({recipients, subject, body})
                     }
-                    }>{isSending ? "Sending..." : "Send"}</button>
+                    }>{isSending ? "⏳Sending..." : "Send"}</button>
                 </div>
             </div>
         </div>

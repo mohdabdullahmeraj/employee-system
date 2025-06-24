@@ -53,11 +53,13 @@ button:disabled {
 }
 
 .mail-btn:disabled{
+  visibility: hidden;
   background-color: #aaa ;
   cursor: not-allowed ;  
 }
 
 .delete-btn:disabled {
+  visibility:hidden;
   background-color: #aaa ;
   cursor: not-allowed ;
 }
@@ -258,4 +260,17 @@ th, td {
 .confirm-modal{
   position: fixed;
   z-index: 1100;
+}
+
+.mail-btn-cancel:disabled{
+  button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+}
+
+.error-text{
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
 }

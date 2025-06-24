@@ -38,6 +38,7 @@ const EmployeeTable = () => {
     const [showMailModal, setShowMailModal] = useState(false)
     const [emailRecipients, setEmailRecipients] = useState([])
     const [isSending, setIsSending] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
 
     useEffect(() => {
       localStorage.setItem('employees', JSON.stringify(employee))
@@ -145,7 +146,7 @@ const EmployeeTable = () => {
             showAlert("No recipients to send email to.")
             return 
         }
-        setShowMailModal(false)
+        // setShowMailModal(false)
 
         const emailPromises = recipients.map((to_email) => {
             const templateParameters ={
@@ -165,9 +166,11 @@ const EmployeeTable = () => {
         Promise.all(emailPromises)
             .then(() => {
                 showAlert('Email(s) sent successfully!')
+                setShowMailModal(false)
             })
             .catch((err) => {
                 console.error('EmailJS error: ', err)
+                setErrorMessage("❌ Failed to send email. Please try again.")
                 showAlert("Some emails failed to send.")
             })
             .finally(() => {
@@ -256,6 +259,8 @@ const EmployeeTable = () => {
                 showAlert={showAlert}
                 isSending={isSending}
                 setIsSending={setIsSending}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
             />
         )}
 
