@@ -16,7 +16,8 @@ const EmployeeTable = () => {
 
         initial = initial.map((emp, idx) => ({
             ...emp, 
-            id: emp.id ?? idx+1
+            id: emp.id ?? idx+1,
+            image: emp.image ?? "https://i.pravatar.cc/150?img=3"
         }))
 
         return initial
@@ -202,6 +203,7 @@ const EmployeeTable = () => {
                     <tr>
 
                         <th><input type="checkbox" checked={currentEmployees.every(emp => selectedEmployees.includes(emp.id))} onChange={handleSelectAll} /></th>
+                        <th>Image</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Address</th>

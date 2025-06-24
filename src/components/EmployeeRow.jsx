@@ -4,6 +4,7 @@ const EmployeeRow = ({employee, isSelected, onCheckboxChange, onDelete, onEdit, 
   return (
     <tr>
         <td><input className='check' type="checkbox" checked={isSelected} onChange={onCheckboxChange} /></td>
+        <td><img src={employee.image}alt={employee.name} style={{ width: "40px", height: "40px", borderRadius: "50%" }} /></td>
         <td>{employee.name}</td>
         <td>{employee.email}</td>
         <td>{employee.address}</td>
