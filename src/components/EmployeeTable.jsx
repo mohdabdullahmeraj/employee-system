@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import employeeData from '../data'
+// import employeeData from '../data'
 import EmployeeRow from './EmployeeRow';
 import Header from './Header';
 import Pagination from './Pagination';
@@ -11,18 +11,34 @@ import SearchBar from './SearchBar';
 
 const EmployeeTable = () => {
     
-    const [employee, setEmployee] = useState(() => {
-        const stored = localStorage.getItem('employees')
-        let initial = stored? JSON.parse(stored) : employeeData
+    // const [employee, setEmployee] = useState(() => {
+    //     const stored = localStorage.getItem('employees')
+    //     let initial = stored? JSON.parse(stored) : employeeData
 
-        initial = initial.map((emp, idx) => ({
-            ...emp, 
-            id: emp.id ?? idx+1,
-            image: emp.image ?? "https://i.pravatar.cc/150?img=3"
-        }))
+    //     initial = initial.map((emp, idx) => ({
+    //         ...emp, 
+    //         id: emp.id ?? idx+1,
+    //         image: emp.image ?? "https://i.pravatar.cc/150?img=3"
+    //     }))
 
-        return initial
-    })
+    //     return initial
+    // })
+    const [employee, setEmployee] = useState([])
+    const [isloading, setIsloading] = useState(true)
+
+    useEffect(() =>{
+        fetch('https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees')
+            .then((res) => res.json())
+            .then((data) => {
+                setEmployee(data)
+                setIsloading(false)
+            })
+            .catch((err) => {
+                console.error("Failed to fetch employee data: ", err)
+                setIsloading(false)
+            })
+    }, [])
+
     const [selectedEmployees, setSelectedEmployees] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [editingEmployee, setEditingEmployee] = useState(null)
@@ -53,10 +69,10 @@ const EmployeeTable = () => {
     const [isSending, setIsSending] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
 
-    useEffect(() => {
-      localStorage.setItem('employees', JSON.stringify(employee))
+    // useEffect(() => {
+    //   localStorage.setItem('employees', JSON.stringify(employee))
 
-    }, [employee])
+    // }, [employee])
     
     useEffect(() => {
         setCurrentPage(1)
@@ -209,7 +225,9 @@ const EmployeeTable = () => {
     return (
     
     <div className='container'>
-        
+        {isloading ? (
+      <div style={{ textAlign: 'center', padding: '20px' }}>Loading...</div>
+    ) : (<>
         <Header 
             disabledDelete={selectedEmployees.length === 0} 
             onDelete={() => handleDelete()} 
@@ -301,7 +319,7 @@ const EmployeeTable = () => {
                 setErrorMessage={setErrorMessage}
             />
         )}
-
+</>)}
     </div>
   )
 }
