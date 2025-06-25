@@ -6,7 +6,8 @@ const EmployeeFormModal = ({onClose, onConfirm, editingEmployee, showAlert}) => 
         name: '',
         email: '',
         address: '',
-        phone: ''  
+        phone: '',
+        image: ''  
     })
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,18 +36,27 @@ const EmployeeFormModal = ({onClose, onConfirm, editingEmployee, showAlert}) => 
             <div className='modal-content'>
                 <div className='modal-fields'>
 
+                    <input type="text" name='image' value={formData.image} onChange={handleChange} placeholder='Image URL'/>
                     <input type="text" name='name' value={formData.name} onChange={handleChange} placeholder='Name'/>
                     <input type="text" name='email' value={formData.email} onChange={handleChange} placeholder='Email'/>
                     <input type="text" name='address' value={formData.address} onChange={handleChange} placeholder='Address'/>
                     <input type="text" name='phone' value={formData.phone} onChange={handleChange} placeholder='Phone'/>
-                
+
+                    {formData.image && (
+                        <img
+                            src={formData.image}
+                            alt="Avatar Preview"
+                            style={{ width: "60px", height: "60px", borderRadius: "50%", marginTop: "10px" }}
+                        />
+                    )}
+                                    
                 </div>
                 <div className='modal-btn'>
                     <button onClick={onClose}>Cancel</button>
                     <button onClick={() => {
                         setIsSubmitting(true);
 
-                        if(!formData.name || !formData.email || !formData.address || !formData.phone){
+                        if(!formData.image ||!formData.name || !formData.email || !formData.address || !formData.phone){
                             // alert("Please fill in all fields")
                             showAlert("Please fill in all fields")
                             setIsSubmitting(false);

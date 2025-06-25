@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-// import employeeData from '../data'
 import EmployeeRow from './EmployeeRow';
 import Header from './Header';
 import Pagination from './Pagination';
@@ -11,18 +10,6 @@ import SearchBar from './SearchBar';
 
 const EmployeeTable = () => {
     
-    // const [employee, setEmployee] = useState(() => {
-    //     const stored = localStorage.getItem('employees')
-    //     let initial = stored? JSON.parse(stored) : employeeData
-
-    //     initial = initial.map((emp, idx) => ({
-    //         ...emp, 
-    //         id: emp.id ?? idx+1,
-    //         image: emp.image ?? "https://i.pravatar.cc/150?img=3"
-    //     }))
-
-    //     return initial
-    // })
     const [employee, setEmployee] = useState([])
     const [isloading, setIsloading] = useState(true)
 
@@ -68,11 +55,6 @@ const EmployeeTable = () => {
     const [emailRecipients, setEmailRecipients] = useState([])
     const [isSending, setIsSending] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
-
-    // useEffect(() => {
-    //   localStorage.setItem('employees', JSON.stringify(employee))
-
-    // }, [employee])
     
     useEffect(() => {
         setCurrentPage(1)
@@ -106,10 +88,28 @@ const EmployeeTable = () => {
         
         setModalMode("confirm")
         setOnModalConfirm(() => () => {
-            const updateList = employee.filter(emp => !selectedEmployees.includes(emp.id))
-            setEmployee(updateList)
-            setSelectedEmployees([])
-            setShowConfirmModal(false)
+            const deletePromises = selectedEmployees.map(id =>
+                    fetch(`https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees/${id}`, {
+                    method: 'DELETE'
+                })
+            )
+
+            Promise.all(deletePromises)
+                .then(responses => {
+                    if(responses.some(res => !res.ok)){
+                        throw new Error("One or more deletions failed")
+                    }
+                const updateList = employee.filter(emp => !selectedEmployees.includes(emp.id))
+                setEmployee(updateList)
+                setSelectedEmployees([])
+                setShowConfirmModal(false)
+                    
+                })
+                .catch(err => {
+                    console.error('Error deleting employee:', err)
+                    showAlert("❌ Failed to delete employee. Please try again.")
+                })
+
         })
         
 
@@ -119,15 +119,57 @@ const EmployeeTable = () => {
 
     const handleConfirmAdd = (formData) => {
         if(editingEmployee){
-            const updated = employee.map(emp => emp.id === editingEmployee.id ? {...formData, id: editingEmployee.id}: emp)
-            setEmployee(updated)
-            setEditingEmployee(null)
+            fetch(`https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees/${editingEmployee.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(res => {
+                if(!res.ok){
+                    throw new Error('Failed to edit employee')
+                }
+                return res.json()
+            })
+            .then(updateEmployee => {
+                setEmployee(prev => 
+                    prev.map(emp => 
+                        emp.id === updateEmployee.id ? updateEmployee : emp
+                    )
+                )
+                setEditingEmployee(null)
+                setShowModal(false)
+            })  
+            .catch(err => {
+                console.error("Error updating employee:", err)
+                showAlert("❌ Failed to update employee. Please try again.")
+            })
+            
 
         }else{
-            const id = Math.max(...employee.map(emp => emp.id)) + 1
-            const updated = [...employee, { ...formData, id}]
-            setEmployee(updated) 
-            setShowModal(false)
+            fetch('https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(res => {
+                if(!res.ok){
+                    throw new Error('Failed to add employee')
+                }
+                return res.json()
+            })
+            .then(newEmployee => {
+                setEmployee(prev => [...prev, newEmployee])
+                setShowModal(false)
+            })
+            .catch(err => {
+                console.error("Error adding employee:", err)
+                showAlert("❌ Failed to add employee. Please try again.")
+            })
+
         }
 
         setShowModal(false)
@@ -143,8 +185,21 @@ const EmployeeTable = () => {
         setModalMessage(`Do you want to delete the record, ${emp.name}`)
         setModalMode("confirm")
         setOnModalConfirm(() => () => {
-            setEmployee(employee.filter(emp => emp.id !== id))
-            setShowConfirmModal(false)
+            fetch(`https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees/${id}`, {
+                method: 'DELETE'
+            })
+            .then(res => {
+                if(!res.ok){
+                    throw new Error("Failed to delete employee")
+                }
+                setEmployee(employee.filter(emp => emp.id !== id))
+                setShowConfirmModal(false)
+            })
+            .catch(err => {
+                console.error('Error deleting employee:', err)
+                showAlert("❌ Failed to delete employee. Please try again.")
+            })
+
         })
 
         setShowConfirmModal(true)
