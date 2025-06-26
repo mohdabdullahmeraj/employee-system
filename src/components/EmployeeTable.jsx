@@ -7,6 +7,7 @@ import ConfirmModal from './ConfirmModal';
 import EmailModal from './EmailModal';
 import emailjs from '@emailjs/browser'
 import SearchBar from './SearchBar';
+import { API_BASE_URL } from '../constants';
 
 const EmployeeTable = () => {
     
@@ -14,7 +15,7 @@ const EmployeeTable = () => {
     const [isloading, setIsloading] = useState(true)
 
     useEffect(() =>{
-        fetch('https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees')
+        fetch(`${API_BASE_URL}/employees`)
             .then((res) => res.json())
             .then((data) => {
                 setEmployee(data)
@@ -89,7 +90,7 @@ const EmployeeTable = () => {
         setModalMode("confirm")
         setOnModalConfirm(() => () => {
             const deletePromises = selectedEmployees.map(id =>
-                    fetch(`https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees/${id}`, {
+                    fetch(`${API_BASE_URL}/employees/${id}`, {
                     method: 'DELETE'
                 })
             )
@@ -119,7 +120,7 @@ const EmployeeTable = () => {
 
     const handleConfirmAdd = (formData) => {
         if(editingEmployee){
-            fetch(`https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees/${editingEmployee.id}`, {
+            fetch(`${API_BASE_URL}/employees/${editingEmployee.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-type': 'application/json'
@@ -148,7 +149,7 @@ const EmployeeTable = () => {
             
 
         }else{
-            fetch('https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees', {
+            fetch(`${API_BASE_URL}/employees/`, {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json'
@@ -185,7 +186,7 @@ const EmployeeTable = () => {
         setModalMessage(`Do you want to delete the record, ${emp.name}`)
         setModalMode("confirm")
         setOnModalConfirm(() => () => {
-            fetch(`https://685ba4f389952852c2da5785.mockapi.io/api/v1/employees/${id}`, {
+            fetch(`${API_BASE_URL}/employees/${id}`, {
                 method: 'DELETE'
             })
             .then(res => {
